@@ -85,7 +85,7 @@ def main():
 
     # Start experiment
     try:
-        for block_nr in N_BLOCKS:
+        for block_nr in range(N_BLOCKS):
             # Pseudo-randomly create conditions and target locations (so they're weighted)
             trials = create_trial_list(8 if testing else TRIALS_PER_BLOCK)
 
@@ -113,7 +113,7 @@ def main():
                     {
                         "trial_number": current_trial,
                         "block": block_nr + 1,
-                        "block_type": block,
+                        "block_type": "headphones", # we only do headphones blocks
                         "start_time": str(
                             dt.timedelta(seconds=(start_time - start_of_experiment))
                         ),
