@@ -18,17 +18,17 @@ def create_trial_list(n_trials):
             "Expected number of trials to be divisible by 8, otherwise perfect factorial combinations are not possible."
         )
 
+    # Determine pitches counterweighted with locations
+    target_pitch = n_trials // 2 * ["low"] + n_trials // 2 * ["high"]
+
+    # Generate equal distribution of stimulus locations
+    target_position =  2 * (n_trials // 4 * ["left"] + n_trials // 4 * ["right"])
+
     # Generate equal distribution of target items
     target_item = n_trials // 2 * [1, 2]
 
-    # Generate equal distribution of stimulus locations
-    locs = n_trials // 4 * (2 * [("left", "right")] + 2 * [("right", "left")])
-
-    # Determine pitches counterweighted with locations
-    pitches = n_trials // 2 * (4 * [("low", "high")] + 4 * [("high", "low")])
-
     # Create trial parameters for all trials
-    trials = list(zip(target_item, locs, pitches))
+    trials = list(zip(target_pitch, target_position, target_item))
     random.shuffle(trials)
 
     return trials
