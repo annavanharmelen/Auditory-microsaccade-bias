@@ -53,19 +53,13 @@ def get_response(
     # Set initial settings
     freq = 450
     freq_step = 50
-    chunk_duration = 2
-    keys_held = set()
+    tone_duration = 0.5
     responded = False
-
-    # Start playing initial tone
-    current_tone = sound.Sound(
-        freq, secs=chunk_duration, loops=-1, stereo=True, volume=0.1
-    )
-    current_tone.play()
 
     # Wait for response to start
     keyboard.clock.reset()
-    key = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=False)
+    first_keys = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=True)
+    keys = first_keys # use first key press for first tone generation
     response_started = time()
 
     if not testing and eyetracker:
@@ -74,35 +68,29 @@ def get_response(
 
     # Let participant change tone frequency until space bar is pressed
     while not responded:
-        [down_pressed, up_pressed, space_pressed] = settings["keyboard"].getState(
-            ["down", "up", "space"]
-        )
 
-        if space_pressed:
+        if "space" in keys:
             responded = True
             response_freq = freq
-        if down_pressed:
+
+        if "down" in keys:
             freq = max(200, freq - freq_step)
             new_tone = sound.Sound(
-                freq, secs=chunk_duration, loops=-1, stereo=True, volume=0.1
+                freq, secs=tone_duration, loops=0, stereo=True, volume=0.1
             )
             new_tone.play()
-            core.wait(0.05)
-            current_tone.stop()
-            current_tone = new_tone
-        if up_pressed:
+
+        if "up" in keys:
             freq = min(700, freq + freq_step)
             new_tone = sound.Sound(
-                freq, secs=chunk_duration, loops=-1, stereo=True, volume=0.1
+                freq, secs=tone_duration, loops=0, stereo=True, volume=0.1
             )
             new_tone.play()
-            core.wait(0.05)
-            current_tone.stop()
-            current_tone = new_tone
 
-        core.wait(0.1)  # reduce CPU load
+        keys = keyboard.getKeys(keyList=["down", "up", "space"])
 
-    current_tone.stop()
+        if keys:
+            new_tone.stop()
 
     # Compute both reaction times
     response_time = time() - response_started
@@ -118,7 +106,7 @@ def get_response(
     return {
         "idle_reaction_time_in_ms": round(idle_reaction_time * 1000, 2),
         "response_time_in_ms": round(response_time * 1000, 2),
-        "first_key_pressed": key[0].name,
+        "first_key_pressed": first_keys[0].name,
         "response_freq": response_freq,
         "premature_pressed": True if prematurely_pressed else False,
         "premature_key": prematurely_pressed[0][0] if prematurely_pressed else None,
