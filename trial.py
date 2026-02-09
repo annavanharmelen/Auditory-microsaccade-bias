@@ -24,33 +24,52 @@ import random
 
 def generate_trial_characteristics(conditions):
     # Extract condition information
-    target_item, positions, pitch_order = conditions
-
-    # Decide on random pitches of the stimuli
-    # pitch = random.randint(25, 51)
-    # pitch_dict = {
-    #     "low": random.randint(pitch - 5, pitch - 2) * 10,
-    #     "high": random.randint(pitch + 2, pitch + 5) * 10,
-    # }
+    target_pitch_cat, target_position, target_item = conditions
 
     pitch_dict = {
-        "low": random.randint(30, 80) * 10,
-        "high": random.randint(30, 80) * 10,
+        "low": random.choice([200, 250, 300, 350, 400]),
+        "high": random.choice([500, 550, 600, 650, 700]),
     }
-    pitches = (pitch_dict[pitch_order[0]], pitch_dict[pitch_order[1]])
+
+    target_pitch = pitch_dict[target_pitch_cat]
+
+    distractor_pitch_cat = {"high": "low", "low": "high"}[target_pitch_cat]
+    distractor_position = {"left": "right", "right": "left"}[target_position]
+    distractor_item = {1: 2, 2: 1}[target_item]
+    distractor_pitch = pitch_dict[distractor_pitch_cat]
+
+    if target_position == "left":
+        order = [target_item, distractor_item]
+        pitches_positions = [target_pitch_cat, distractor_pitch_cat]
+    else:
+        order = [distractor_item, target_item]
+        pitches_positions = [distractor_pitch_cat, target_pitch_cat]
+
+    if target_item == 1:
+        positions = [target_position, distractor_position]
+        pitches_order_cat = [target_pitch_cat, distractor_pitch_cat]
+        pitches_order = [target_pitch, distractor_pitch]
+
+    else:
+        positions = [distractor_position, target_position]
+        pitches_order_cat = [distractor_pitch_cat, target_pitch_cat]
+        pitches_order = [distractor_pitch, target_pitch]
 
     return {
         "ITI": random.randint(500, 800),
         "target_item": target_item,
-        "target_position": positions[0] if target_item == 1 else positions[1],
-        "target_pitch": pitches[0] if target_item == 1 else pitches[1],
-        "target_pitch_cat": pitch_order[0] if target_item == 1 else pitch_order[1],
-        "distractor_item": 2 if target_item == 1 else 1,
-        "distractor_position": positions[1] if target_item == 1 else positions[0],
-        "distractor_pitch": pitches[1] if target_item == 1 else pitches[0],
-        "distractor_pitch_cat": pitch_order[1] if target_item == 1 else pitch_order[0],
+        "target_position": target_position,
+        "target_pitch": target_pitch,
+        "target_pitch_cat": target_pitch_cat,
+        "distractor_item": distractor_item,
+        "distractor_position": distractor_position,
+        "distractor_pitch": distractor_pitch,
+        "distractor_pitch_cat": distractor_pitch_cat,
         "positions": positions,
-        "pitches": pitches,
+        "order_LR": order,
+        "pitches_positions": pitches_positions,
+        "pitches_order_cat": pitches_order_cat,
+        "pitches_order": pitches_order,
     }
 
 
@@ -76,7 +95,10 @@ def single_trial(
     distractor_pitch,
     distractor_pitch_cat,
     positions,
-    pitches,
+    order_LR,
+    pitches_positions,
+    pitches_order_cat,
+    pitches_order,
     settings,
     testing,
     eyetracker=None,
@@ -88,14 +110,14 @@ def single_trial(
         (0, lambda: 0 / 0, None),  # initial one to make life easier
         (ITI / 1000, lambda: draw_fixation_dot(settings), None),
         (
-            pitches[0] / 1000,
-            lambda: play_stimulus_frame(positions[0], pitches[0], settings),
+            0.5,
+            lambda: play_stimulus_frame(positions[0], pitches_order[0], settings),
             "stimulus_onset_1",
         ),
         (0.75, lambda: draw_fixation_dot(settings), None),
         (
-            pitches[1] / 1000,
-            lambda: play_stimulus_frame(positions[1], pitches[1], settings),
+            0.5,
+            lambda: play_stimulus_frame(positions[1], pitches_order[1], settings),
             "stimulus_onset_2",
         ),
         (0.75, lambda: draw_fixation_dot(settings), None),
