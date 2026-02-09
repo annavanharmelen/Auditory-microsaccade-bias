@@ -15,7 +15,13 @@ import psychopy
 from pprint import pprint
 import psychtoolbox.audio
 from block import create_trial_list
+from trial import generate_trial_characteristics
 
+
+print(generate_trial_characteristics(("high", "right", 2)))
+
+import sys
+sys.exit()
 
 monitor, directory = get_monitor_and_dir(True)
 settings = get_settings(monitor, directory)
