@@ -6,7 +6,7 @@ see README.md for instructions if needed
 """
 
 # Import necessary stuff
-from psychopy import core
+from psychopy import logging, core
 import pandas as pd
 from participantinfo import get_participant_details
 from set_up import get_monitor_and_dir, get_settings
@@ -40,6 +40,9 @@ def main():
 
     # Set whether this is a test run or not
     testing = True
+
+    # first things first: ignore warnings
+    logging.console.setLevel(logging.ERROR)
 
     # Get monitor and directory information
     monitor, directory = get_monitor_and_dir(testing)
