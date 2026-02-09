@@ -51,7 +51,7 @@ def get_response(
     keyboard.clearEvents()
 
     # Set initial settings
-    freq = 360
+    freq = 450
     freq_step = 50
     chunk_duration = 2
     keys_held = set()
@@ -65,7 +65,7 @@ def get_response(
 
     # Wait for response to start
     keyboard.clock.reset()
-    key = keyboard.waitKeys(keyList=["z", "m", "space"], waitRelease=False)
+    key = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=False)
     response_started = time()
 
     if not testing and eyetracker:
@@ -74,15 +74,15 @@ def get_response(
 
     # Let participant change tone frequency until space bar is pressed
     while not responded:
-        [z_pressed, m_pressed, space_pressed] = settings["keyboard"].getState(
-            ["z", "m", "space"]
+        [down_pressed, up_pressed, space_pressed] = settings["keyboard"].getState(
+            ["down", "up", "space"]
         )
 
         if space_pressed:
             responded = True
             response_freq = freq
-        if z_pressed:
-            freq = max(100, freq - freq_step)
+        if down_pressed:
+            freq = max(200, freq - freq_step)
             new_tone = sound.Sound(
                 freq, secs=chunk_duration, loops=-1, stereo=True, volume=0.1
             )
@@ -90,8 +90,8 @@ def get_response(
             core.wait(0.05)
             current_tone.stop()
             current_tone = new_tone
-        if m_pressed:
-            freq = min(720, freq + freq_step)
+        if up_pressed:
+            freq = min(700, freq + freq_step)
             new_tone = sound.Sound(
                 freq, secs=chunk_duration, loops=-1, stereo=True, volume=0.1
             )
