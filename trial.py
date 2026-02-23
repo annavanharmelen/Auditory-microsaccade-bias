@@ -153,9 +153,7 @@ def single_trial(
     )
 
     # Show performance (and feedback on premature key usage if necessary)
-    create_feedback_frame(
-        target_pitch, response["response_freq"], response["performance"], settings
-    )
+    create_feedback_frame(response["performance"], settings)
 
     if response["premature_pressed"] == True:
         show_text("!", settings["window"], (0, -settings["deg2pix"](0.3)))

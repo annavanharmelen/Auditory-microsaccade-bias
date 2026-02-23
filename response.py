@@ -13,10 +13,10 @@ from eyetracker import get_trigger
 from stimuli import draw_fixation_dot
 
 
-def evaluate_response(target_frequency, response_frequency):
+def evaluate_response(target_frequency, response_frequency, frequency_list):
     freq_diff = response_frequency - target_frequency
     freq_diff_abs = abs(freq_diff)
-    performance = round(freq_diff)
+    performance = frequency_list.index(response_frequency) - frequency_list.index(target_frequency)
     sign = "+" if freq_diff > 0 else ""
     return {
         "frequency_offset": round(freq_diff),
@@ -113,7 +113,7 @@ def get_response(
         "premature_timing": (
             round(prematurely_pressed[0][1] * 1000, 2) if prematurely_pressed else None
         ),
-        **evaluate_response(target_pitch, response_freq),
+        **evaluate_response(target_pitch, response_freq, freqs),
     }
 
 

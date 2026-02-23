@@ -46,10 +46,10 @@ def create_cue_frame(target_item, settings):
     show_text(target_item, settings["window"], pos=(0, settings["deg2pix"](0.3)))
 
 
-def create_feedback_frame(target_pitch, response_pitch, main_feedback, settings):
+def create_feedback_frame(main_feedback, settings):
     draw_fixation_dot(settings)
     show_text(
-        f"Actual: {target_pitch}\nReport: {response_pitch}\n\n{main_feedback}",
+        f"{main_feedback}",
         settings["window"],
-        (0, settings["deg2pix"](0.65)),
+        (0, settings["deg2pix"](0.3)),
     )
