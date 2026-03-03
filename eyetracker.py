@@ -48,7 +48,7 @@ class Eyelinker:
         self.tracker.close_edf()
 
 
-def get_trigger(frame, target_item, target_pitch, target_position):
+def get_trigger(frame, target_pitch, target_item, target_position):
     condition_marker = int(target_item)
 
     if target_pitch == "high":

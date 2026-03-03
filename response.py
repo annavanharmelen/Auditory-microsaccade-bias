@@ -28,8 +28,9 @@ def evaluate_response(target_frequency, response_frequency, freqs):
 
 def get_response(
     target_pitch,
-    positions,
+    target_pitch_cat,
     target_item,
+    target_position,
     settings,
     testing,
     eyetracker,
@@ -64,7 +65,7 @@ def get_response(
     response_started = time()
 
     if not testing and eyetracker:
-        trigger = get_trigger("response_onset", positions, target_item)
+        trigger = get_trigger("response_onset", target_pitch_cat, target_item, target_position)
         eyetracker.tracker.send_message(f"trig{trigger}")
 
     # Let participant change tone frequency until space bar is pressed
@@ -99,7 +100,7 @@ def get_response(
     idle_reaction_time = response_started - idle_reaction_time_start
 
     if not testing and eyetracker:
-        trigger = get_trigger("response_offset", positions, target_item)
+        trigger = get_trigger("response_offset", target_pitch_cat, target_item, target_position)
         eyetracker.tracker.send_message(f"trig{trigger}")
 
     # Make sure keystrokes made during this trial don't influence the next
