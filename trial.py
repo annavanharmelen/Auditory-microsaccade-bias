@@ -22,13 +22,13 @@ from eyetracker import get_trigger
 import random
 
 
-def generate_trial_characteristics(conditions):
+def generate_trial_characteristics(conditions, settings):
     # Extract condition information
     target_pitch_cat, target_position, target_item = conditions
 
     pitch_dict = {
-        "low": random.choice([200, 250, 300, 350, 400]),
-        "high": random.choice([500, 550, 600, 650, 700]),
+        "low": random.choice(settings["frequencies"][:5]),
+        "high": random.choice(settings["frequencies"][6:]),
     }
 
     target_pitch = pitch_dict[target_pitch_cat]

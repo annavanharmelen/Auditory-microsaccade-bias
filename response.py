@@ -11,12 +11,13 @@ from psychopy.hardware.keyboard import Keyboard
 from time import time
 from eyetracker import get_trigger
 from stimuli import draw_fixation_dot
+from math import floor
 
 
-def evaluate_response(target_frequency, response_frequency, frequency_list):
+def evaluate_response(target_frequency, response_frequency, freqs):
     freq_diff = response_frequency - target_frequency
     freq_diff_abs = abs(freq_diff)
-    performance = frequency_list.index(response_frequency) - frequency_list.index(target_frequency)
+    performance = freqs.index(response_frequency) - freqs.index(target_frequency)
     sign = "+" if freq_diff > 0 else ""
     return {
         "frequency_offset": round(freq_diff),
@@ -51,15 +52,15 @@ def get_response(
     keyboard.clearEvents()
 
     # Set initial settings
-    freq = 450
-    freq_step = 50
+    freqs = settings["frequencies"]
+    idx = floor(len(freqs) / 2)  # use middle index to start
     tone_duration = 0.5
     responded = False
 
     # Wait for response to start
     keyboard.clock.reset()
     first_keys = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=True)
-    keys = first_keys # use first key press for first tone generation
+    keys = first_keys  # use first key press for first tone generation
     response_started = time()
 
     if not testing and eyetracker:
@@ -71,19 +72,20 @@ def get_response(
 
         if "space" in keys:
             responded = True
-            response_freq = freq
+            response_freq = freqs[idx]
+            response_idx = idx
 
         if "down" in keys:
-            freq = max(200, freq - freq_step)
+            idx = max(idx - 1, 0)
             new_tone = sound.Sound(
-                freq, secs=tone_duration, loops=0, stereo=True, volume=0.1
+                freqs[idx], secs=tone_duration, loops=0, stereo=True, volume=0.1
             )
             new_tone.play()
 
         if "up" in keys:
-            freq = min(700, freq + freq_step)
+            idx = min(idx + 1, len(freqs) - 1)
             new_tone = sound.Sound(
-                freq, secs=tone_duration, loops=0, stereo=True, volume=0.1
+                freqs[idx], secs=tone_duration, loops=0, stereo=True, volume=0.1
             )
             new_tone.play()
 
@@ -108,6 +110,7 @@ def get_response(
         "response_time_in_ms": round(response_time * 1000, 2),
         "first_key_pressed": first_keys[0].name,
         "response_freq": response_freq,
+        "response_idx": response_idx,
         "premature_pressed": True if prematurely_pressed else False,
         "premature_key": prematurely_pressed[0][0] if prematurely_pressed else None,
         "premature_timing": (

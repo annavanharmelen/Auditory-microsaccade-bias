@@ -16,9 +16,9 @@ from time import time
 from numpy import mean
 from practice import practice
 import datetime as dt
-from block import (
+from block import (   
     create_trial_list,
-    block_break,
+    block_break,   
     long_break,
     finish,
     quick_finish,
@@ -100,7 +100,7 @@ def main():
                 current_trial += 1
                 start_time = time()
 
-                trial_characteristics: dict = generate_trial_characteristics(trial)
+                trial_characteristics: dict = generate_trial_characteristics(trial, settings)
 
                 # Generate trial
                 report: dict = single_trial(
