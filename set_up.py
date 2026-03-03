@@ -34,7 +34,7 @@ def get_monitor_and_dir(testing: bool):
             "distance": 70,  # in cm
         }
 
-        directory = r"C:\Users\m_bias_duration\Desktop\Duration data"
+        directory = r"C:/Users/vidi_asa/Desktop/Auditory data/"
 
     return monitor, directory
 
