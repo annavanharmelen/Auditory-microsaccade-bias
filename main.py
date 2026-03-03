@@ -39,7 +39,7 @@ def main():
     """
 
     # Set whether this is a test run or not
-    testing = True
+    testing = False
 
     # first things first: ignore warnings
     logging.console.setLevel(logging.ERROR)
