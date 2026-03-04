@@ -22,6 +22,7 @@ def evaluate_response(target_frequency, response_frequency, freqs):
     return {
         "frequency_offset": round(freq_diff),
         "frequency_diff_abs": round(freq_diff_abs),
+        "performance_abs": abs(performance),
         "performance": f"{sign}{performance}",
     }
 

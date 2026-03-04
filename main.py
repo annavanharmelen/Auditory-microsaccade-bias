@@ -133,10 +133,10 @@ def main():
                     }
                 )
 
-                block_performance.append(int(report["frequency_diff_abs"]))
+                block_performance.append(int(report["performance_abs"]))
 
             # Calculate average performance score for most recent block
-            avg_score = round(mean(block_performance))
+            avg_score = round(mean(block_performance), 1)
 
             # Break after end of block, unless it's the last block.
             # Experimenter can re-calibrate the eyetracker by pressing 'c' here.

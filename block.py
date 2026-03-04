@@ -38,7 +38,7 @@ def block_break(current_block, n_blocks, avg_score, settings, eyetracker):
     blocks_left = n_blocks - current_block
 
     show_text(
-        f"In the previous block, your reports were on average off by {avg_score}."
+        f"In the previous block, your reports were on average off by {avg_score}"
         f"\n\nYou just finished block {current_block}, you {'only ' if blocks_left == 1 else ''}"
         f"have {blocks_left} block{'s' if blocks_left != 1 else ''} left. "
         "Take a break if you want to, but try not to move your head during this break."
