@@ -11,6 +11,7 @@ import pandas as pd
 from participantinfo import get_participant_details
 from set_up import get_monitor_and_dir, get_settings
 from eyetracker import Eyelinker
+from stimuli import initialise_all_stimuli
 from trial import single_trial, generate_trial_characteristics
 from time import time
 from numpy import mean
@@ -77,6 +78,9 @@ def main():
     if not testing:
         eyelinker.start()
 
+    # Initialise stimuli
+    cached_sounds = initialise_all_stimuli(settings)
+
     # Practice until participant wants to stop
     # practice(None if testing else eyelinker, settings)
 
@@ -105,6 +109,7 @@ def main():
                 # Generate trial
                 report: dict = single_trial(
                     **trial_characteristics,
+                    cached_sounds=cached_sounds,
                     settings=settings,
                     testing=testing,
                     eyetracker=None if testing else eyelinker,

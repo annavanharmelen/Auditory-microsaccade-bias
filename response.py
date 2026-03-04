@@ -31,6 +31,7 @@ def get_response(
     target_pitch_cat,
     target_item,
     target_position,
+    cached_sounds,
     settings,
     testing,
     eyetracker,
@@ -55,7 +56,6 @@ def get_response(
     # Set initial settings
     freqs = settings["frequencies"]
     idx = floor(len(freqs) / 2)  # use middle index to start
-    tone_duration = 0.5
     responded = False
 
     # Wait for response to start
@@ -78,22 +78,16 @@ def get_response(
 
         if "down" in keys:
             idx = max(idx - 1, 0)
-            new_tone = sound.Sound(
-                freqs[idx], secs=tone_duration, loops=0, stereo=True, volume=0.1
-            )
-            new_tone.play()
+            cached_sounds[(freqs[idx], "both")].play()
 
         if "up" in keys:
             idx = min(idx + 1, len(freqs) - 1)
-            new_tone = sound.Sound(
-                freqs[idx], secs=tone_duration, loops=0, stereo=True, volume=0.1
-            )
-            new_tone.play()
+            cached_sounds[(freqs[idx], "both")].play()
 
         keys = keyboard.getKeys(keyList=["down", "up", "space"])
 
         if keys:
-            new_tone.stop()
+            cached_sounds[(freqs[idx], "both")].stop()
 
     # Compute both reaction times
     response_time = time() - response_started
