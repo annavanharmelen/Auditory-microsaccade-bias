@@ -25,7 +25,7 @@ def initialise_all_stimuli(settings):
     )
 
     # Ramp tone up and down
-    ramp_ms = 5  # ramp duration
+    ramp_ms = 5  # duration in ms
     ramp_samples = int(AUDIO_SAMPLE_RATE * ramp_ms / 1000)
     ramp_up = np.linspace(0, 1, ramp_samples)
     ramp_down = np.linspace(1, 0, ramp_samples)
