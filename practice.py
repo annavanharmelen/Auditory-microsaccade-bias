@@ -16,24 +16,23 @@ from trial import single_trial
 from numpy import mean
 
 
-def practice(eyetracker, settings):
+def practice(sounds, eyetracker, settings):
     # Practice response itself
-    practice_response(eyetracker, settings)
+    practice_response(sounds, eyetracker, settings)
 
     # Practice full trials
-    practice_trials(eyetracker, settings)
+    practice_trials(sounds, eyetracker, settings)
 
 
-def practice_response(eyetracker, settings):
+def practice_response(sounds, eyetracker, settings):
     # Practice response until participant chooses to stop
     try:
         performance = []
 
         # Show first screen
         show_text(
-            "Welcome! "
-            "Press SPACE to start practicing how to reproduce durations."
-            "\n\nRemember to press Q to stop practising.",
+            "Welcome!"
+            "\nPress SPACE to start practicing how to reproduce tones.",
             settings["window"],
         )
         settings["window"].flip()
@@ -55,24 +54,23 @@ def practice_response(eyetracker, settings):
             settings["window"].flip()
             sleep(0.5)
 
-            # Show central square with certain duration
-            stimulus = generate_trial_characteristics([1, "left", "right"])
-            play_stimulus_frame("middle", settings)
-            settings["window"].flip()
-            wait(stimulus["target_duration"] / 1000)
+            # Play tone with certain frequency
+            freq = random.choice(settings["frequencies"][0:5] + settings["frequencies"][6::])
+            play_stimulus_frame("both", freq, sounds, settings)
+            settings["window"].flip() # even checken of de toon 500 ms duurt
 
             # Delay
             draw_fixation_dot(settings)
             settings["window"].flip()
-            wait(1.5)
+            wait(0.25)
 
             # Allow response
             report = get_response(
-                stimulus["target_duration"], None, None, settings, True, None
+                freq, None, None, None, sounds, settings, True, None
             )
 
             # Save for post-hoc feedback
-            performance.append(int(report["duration_diff_abs"]))
+            performance.append(int(report["performance_abs"]))
 
             # Show feedback
             draw_fixation_dot(settings)
@@ -102,8 +100,7 @@ def practice_response(eyetracker, settings):
         show_text(
             f"During this practice, your reports were on average off by {avg_score}. "
             "You decided to stop practising the basic response. "
-            "Press SPACE to start practicing full trials."
-            "\n\nRemember to press Q to stop practising these trials and move on to the final practice part.",
+            "Press SPACE to start practicing full trials.",
             settings["window"],
         )
         settings["window"].flip()
@@ -120,30 +117,31 @@ def practice_response(eyetracker, settings):
         settings["keyboard"].clearEvents()
 
 
-def practice_trials(eyetracker, settings):
+def practice_trials(sounds, eyetracker, settings):
     # Practice full trials until participant chooses to stop
     try:
         performance = []
 
         while True:
+            target_pitch = random.choice(["low", "high"])
+            target_position = random.choice(["left", "right"])
             target_item = random.choice([1, 2])
-            loc_1 = random.choice(["left", "right"])
-            loc_2 = "right" if loc_1 == "left" else "left"
 
             trial_characteristics = generate_trial_characteristics(
-                (target_item, loc_1, loc_2)
+                (target_pitch, target_position, target_item), settings
             )
 
             # Generate trial
             report = single_trial(
                 **trial_characteristics,
+                cached_sounds=sounds,
                 settings=settings,
                 testing=True,
                 eyetracker=None,
             )
 
             # Save for feedback
-            performance.append(int(report["duration_diff_abs"]))
+            performance.append(int(report["performance_abs"]))
 
     except KeyboardInterrupt:
         avg_score = round(mean(performance))
