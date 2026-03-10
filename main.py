@@ -111,7 +111,7 @@ def main():
                 # Generate trial
                 report: dict = single_trial(
                     **trial_characteristics,
-                    cached_sounds=cached_sounds,
+                    stimuli=stimuli,
                     settings=settings,
                     testing=testing,
                     eyetracker=None if testing else eyelinker,
