@@ -8,7 +8,7 @@ made by Anna van Harmelen, 2025
 
 import random
 from trial import generate_trial_characteristics
-from stimuli import play_stimulus_frame, draw_fixation_dot, show_text
+from stimuli import draw_fixation_dot, show_text
 from psychopy.core import wait
 from response import get_response, check_quit, wait_for_key
 from time import sleep
@@ -57,13 +57,8 @@ def practice_response(stimuli, eyetracker, settings):
             freq = random.choice(
                 settings["frequencies"][0:5] + settings["frequencies"][6::]
             )
-            play_stimulus_frame("both", freq, stimuli)
-            settings["window"].flip()  # even checken of de toon 500 ms duurt
-
-            # Delay
-            draw_fixation_dot(stimuli["fixation_dot"])
-            settings["window"].flip()
-            wait(0.25)
+            stimuli["sounds"][(freq, "both")].play()
+            wait(0.75)  # wait tone duration + 250 ms
 
             # Allow response
             report = get_response(freq, None, None, None, stimuli, settings, True, None)

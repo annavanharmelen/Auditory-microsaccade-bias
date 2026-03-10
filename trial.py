@@ -14,7 +14,6 @@ from response import get_response, check_quit
 from stimuli import (
     show_text,
     draw_fixation_dot,
-    play_stimulus_frame,
     create_cue_frame,
     create_feedback_frame,
 )
@@ -81,14 +80,16 @@ def generate_trial_characteristics(conditions, settings):
     }
 
 
-def do_while_showing(waiting_time, something_to_do, window):
+def do_while_showing(waiting_time, draw, window, on_flip=None):
     """
     Show whatever is drawn to the screen for exactly `waiting_time` period,
     while doing `something_to_do` in the mean time.
     """
     window.flip()
     start = time()
-    something_to_do()
+    if on_flip:
+        on_flip()
+    draw()
     wait(waiting_time - (time() - start))
 
 
@@ -118,31 +119,35 @@ def single_trial(
     # Initial fixation cross to eliminate jitter caused by for loop
     draw_fixation_dot(stimuli["fixation_dot"])
 
+    # Screens contains per screen: (timing, function_to_draw(), function_to_execute(), triggercode)
     screens = [
-        (0, lambda: 0 / 0, None),  # initial one to make life easier
-        (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (0, lambda: 0 / 0, None, None),  # initial one to make life easier
+        (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
             0.5,
-            lambda: play_stimulus_frame(positions[0], pitches_order[0], stimuli),
+            lambda: draw_fixation_dot(stimuli["fixation_dot"]),
+            lambda: stimuli["sounds"][(pitches_order[0], positions[0])].play(),
             "stimulus_onset_1",
         ),
-        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
             0.5,
-            lambda: play_stimulus_frame(positions[1], pitches_order[1], stimuli),
+            lambda: draw_fixation_dot(stimuli["fixation_dot"]),
+            lambda: stimuli["sounds"][(pitches_order[1], positions[1])].play(),
             "stimulus_onset_2",
         ),
-        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
             0.25,
             lambda: create_cue_frame(target_item, stimuli["fixation_dot"], settings),
+            None,
             "cue_onset",
         ),
-        (1.00, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (1.00, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
     ]
 
     # !!! The timing you pass to do_while_showing is the timing for the previously drawn screen. !!!
-    for index, (duration, _, frame) in enumerate(screens[:-1]):
+    for index, (duration, _, _, frame) in enumerate(screens[:-1]):
         # Send trigger if not testing
         if not testing and frame:
             trigger = get_trigger(frame, target_pitch_cat, target_item, target_position)
@@ -152,7 +157,7 @@ def single_trial(
         check_quit(settings["keyboard"])
 
         # Draw the next screen while showing the current one
-        do_while_showing(duration, screens[index + 1][1], settings["window"])
+        do_while_showing(duration, screens[index + 1][1], settings["window"], screens[index][2])
 
     # The for loop only draws the last frame, never shows it
     # So show it here

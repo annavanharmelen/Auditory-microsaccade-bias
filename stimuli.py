@@ -88,12 +88,6 @@ def draw_fixation_dot(fixation_dot, colour="#eaeaea"):
     fixation_dot.draw()
 
 
-def play_stimulus_frame(position, pitch, stimuli):
-    draw_fixation_dot(stimuli["fixation_dot"])
-    stimuli["sounds"][(pitch, position)].play()
-    core.wait(0.5)
-
-
 def create_cue_frame(target_item, fixation_dot, settings):
     draw_fixation_dot(fixation_dot)
     show_text(target_item, settings["window"], pos=(0, settings["deg2pix"](0.3)))
