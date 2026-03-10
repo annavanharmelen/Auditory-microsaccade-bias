@@ -82,7 +82,7 @@ def main():
     cached_sounds = initialise_all_stimuli(settings)
 
     # Practice until participant wants to stop
-    # practice(None if testing else eyelinker, settings)
+    practice(cached_sounds, None if testing else eyelinker, settings)
 
     # Initialise some stuff
     start_of_experiment = time()
