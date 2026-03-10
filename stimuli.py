@@ -60,7 +60,19 @@ def initialise_all_stimuli(settings):
             waveform, stereo=False, sampleRate=AUDIO_SAMPLE_RATE
         )
 
-    return cached_sounds
+    # Make fixation dot
+    fixation_dot = visual.Circle(
+        win=settings["window"],
+        units="pix",
+        radius=settings["deg2pix"](DOT_SIZE),
+        pos=(0, 0),
+        fillColor="#eaeaea",
+    )
+
+    return {
+        "sounds": cached_sounds,
+        "fixation_dot": fixation_dot,
+    }
 
 
 def show_text(input, window, pos=(0, 0), colour="#ffffff"):
@@ -71,32 +83,24 @@ def show_text(input, window, pos=(0, 0), colour="#ffffff"):
     textstim.draw()
 
 
-def draw_fixation_dot(settings, colour="#eaeaea"):
-    # Make fixation dot
-    fixation_dot = visual.Circle(
-        win=settings["window"],
-        units="pix",
-        radius=settings["deg2pix"](DOT_SIZE),
-        pos=(0, 0),
-        fillColor=colour,
-    )
-
+def draw_fixation_dot(fixation_dot, colour="#eaeaea"):
+    fixation_dot.fillColor = colour
     fixation_dot.draw()
 
 
-def play_stimulus_frame(position, pitch, cached_sounds, settings):
-    draw_fixation_dot(settings)
-    cached_sounds[(pitch, position)].play()
+def play_stimulus_frame(position, pitch, stimuli):
+    draw_fixation_dot(stimuli["fixation_dot"])
+    stimuli["sounds"][(pitch, position)].play()
     core.wait(0.5)
 
 
-def create_cue_frame(target_item, settings):
-    draw_fixation_dot(settings)
+def create_cue_frame(target_item, fixation_dot, settings):
+    draw_fixation_dot(fixation_dot)
     show_text(target_item, settings["window"], pos=(0, settings["deg2pix"](0.3)))
 
 
-def create_feedback_frame(main_feedback, settings):
-    draw_fixation_dot(settings)
+def create_feedback_frame(main_feedback, fixation_dot, settings):
+    draw_fixation_dot(fixation_dot)
     show_text(
         f"{main_feedback}",
         settings["window"],

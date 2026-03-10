@@ -32,7 +32,7 @@ def get_response(
     target_pitch_cat,
     target_item,
     target_position,
-    cached_sounds,
+    stimuli,
     settings,
     testing,
     eyetracker,
@@ -52,7 +52,7 @@ def get_response(
     responded = False
 
     # Show response can start
-    draw_fixation_dot(settings, [-1, -1, -1])
+    draw_fixation_dot(stimuli["fixation_dot"], [-1, -1, -1])
     settings["window"].flip()
 
     # These timing systems should start at the same time, this is almost true
@@ -87,11 +87,13 @@ def get_response(
                 idx = min(idx + 1, len(freqs) - 1)
 
             # Start new tone first, then stop old one (avoids clicks)
-            cached_sounds[(freqs[idx], "both")].stop()  # ensure tone is back to beginning first
-            cached_sounds[(freqs[idx], "both")].play()
+            stimuli["sounds"][
+                (freqs[idx], "both")
+            ].stop()  # ensure tone is back to beginning first
+            stimuli["sounds"][(freqs[idx], "both")].play()
             core.wait(0.005)  # 5 ms overlap
             if idx != old_idx:
-                cached_sounds[(freqs[old_idx], "both")].stop()
+                stimuli["sounds"][(freqs[old_idx], "both")].stop()
 
         core.wait(0.01)
         keys = keyboard.getKeys(keyList=["down", "up", "space"])

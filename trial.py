@@ -107,35 +107,35 @@ def single_trial(
     pitches_positions,
     pitches_order_cat,
     pitches_order,
-    cached_sounds,
+    stimuli,
     settings,
     testing,
     eyetracker=None,
 ):
     # Initial fixation cross to eliminate jitter caused by for loop
-    draw_fixation_dot(settings)
+    draw_fixation_dot(stimuli["fixation_dot"])
 
     screens = [
         (0, lambda: 0 / 0, None),  # initial one to make life easier
-        (ITI / 1000, lambda: draw_fixation_dot(settings), None),
+        (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
         (
             0.5,
-            lambda: play_stimulus_frame(
-                positions[0], pitches_order[0], cached_sounds, settings
-            ),
+            lambda: play_stimulus_frame(positions[0], pitches_order[0], stimuli),
             "stimulus_onset_1",
         ),
-        (0.75, lambda: draw_fixation_dot(settings), None),
+        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
         (
             0.5,
-            lambda: play_stimulus_frame(
-                positions[1], pitches_order[1], cached_sounds, settings
-            ),
+            lambda: play_stimulus_frame(positions[1], pitches_order[1], stimuli),
             "stimulus_onset_2",
         ),
-        (0.75, lambda: draw_fixation_dot(settings), None),
-        (0.25, lambda: create_cue_frame(target_item, settings), "cue_onset"),
-        (1.00, lambda: draw_fixation_dot(settings), None),
+        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (
+            0.25,
+            lambda: create_cue_frame(target_item, stimuli["fixation_dot"], settings),
+            "cue_onset",
+        ),
+        (1.00, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
     ]
 
     # !!! The timing you pass to do_while_showing is the timing for the previously drawn screen. !!!
@@ -161,14 +161,14 @@ def single_trial(
         target_pitch_cat,
         target_item,
         target_position,
-        cached_sounds,
+        stimuli,
         settings,
         testing,
         eyetracker,
     )
 
     # Show performance (and feedback on premature key usage if necessary)
-    create_feedback_frame(response["performance"], settings)
+    create_feedback_frame(response["performance"], stimuli["fixation_dot"], settings)
 
     if response["premature_pressed"] == True:
         show_text("!", settings["window"], (0, -settings["deg2pix"](0.3)))

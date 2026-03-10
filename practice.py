@@ -16,15 +16,15 @@ from trial import single_trial
 from numpy import mean
 
 
-def practice(sounds, eyetracker, settings):
+def practice(stimuli, eyetracker, settings):
     # Practice response itself
-    practice_response(sounds, eyetracker, settings)
+    practice_response(stimuli, eyetracker, settings)
 
     # Practice full trials
-    practice_trials(sounds, eyetracker, settings)
+    practice_trials(stimuli, eyetracker, settings)
 
 
-def practice_response(sounds, eyetracker, settings):
+def practice_response(stimuli, eyetracker, settings):
     # Practice response until participant chooses to stop
     try:
         performance = []
@@ -49,7 +49,7 @@ def practice_response(sounds, eyetracker, settings):
 
         while True:
             # Show fixation dot in preparation
-            draw_fixation_dot(settings)
+            draw_fixation_dot(stimuli["fixation_dot"])
             settings["window"].flip()
             sleep(0.5)
 
@@ -57,22 +57,22 @@ def practice_response(sounds, eyetracker, settings):
             freq = random.choice(
                 settings["frequencies"][0:5] + settings["frequencies"][6::]
             )
-            play_stimulus_frame("both", freq, sounds, settings)
+            play_stimulus_frame("both", freq, stimuli)
             settings["window"].flip()  # even checken of de toon 500 ms duurt
 
             # Delay
-            draw_fixation_dot(settings)
+            draw_fixation_dot(stimuli["fixation_dot"])
             settings["window"].flip()
             wait(0.25)
 
             # Allow response
-            report = get_response(freq, None, None, None, sounds, settings, True, None)
+            report = get_response(freq, None, None, None, stimuli, settings, True, None)
 
             # Save for post-hoc feedback
             performance.append(int(report["performance_abs"]))
 
             # Show feedback
-            draw_fixation_dot(settings)
+            draw_fixation_dot(stimuli["fixation_dot"])
             show_text(
                 f"{report['performance']}",
                 settings["window"],
@@ -86,7 +86,7 @@ def practice_response(sounds, eyetracker, settings):
             sleep(0.25)
 
             # Pause before next one
-            draw_fixation_dot(settings)
+            draw_fixation_dot(stimuli["fixation_dot"])
             settings["window"].flip()
             sleep(random.randint(1500, 2000) / 1000)
 
@@ -121,7 +121,7 @@ def practice_response(sounds, eyetracker, settings):
         settings["keyboard"].clearEvents()
 
 
-def practice_trials(sounds, eyetracker, settings):
+def practice_trials(stimuli, eyetracker, settings):
     # Practice full trials until participant chooses to stop
     try:
         performance = []
@@ -138,7 +138,7 @@ def practice_trials(sounds, eyetracker, settings):
             # Generate trial
             report = single_trial(
                 **trial_characteristics,
-                cached_sounds=sounds,
+                stimuli=stimuli,
                 settings=settings,
                 testing=True,
                 eyetracker=None,
