@@ -38,6 +38,9 @@ def generate_trial_characteristics(conditions, settings):
     distractor_item = {1: 2, 2: 1}[target_item]
     distractor_pitch = pitch_dict[distractor_pitch_cat]
 
+    target_pitch_idx = settings["frequencies"].index(target_pitch)
+    distractor_pitch_idx = settings["frequencies"].index(distractor_pitch)
+
     if target_position == "left":
         order = [target_item, distractor_item]
         pitches_positions = [target_pitch_cat, distractor_pitch_cat]
@@ -49,11 +52,13 @@ def generate_trial_characteristics(conditions, settings):
         positions = [target_position, distractor_position]
         pitches_order_cat = [target_pitch_cat, distractor_pitch_cat]
         pitches_order = [target_pitch, distractor_pitch]
+        pitch_idx_positions = [target_pitch_idx, distractor_pitch_idx]
 
     else:
         positions = [distractor_position, target_position]
         pitches_order_cat = [distractor_pitch_cat, target_pitch_cat]
         pitches_order = [distractor_pitch, target_pitch]
+        pitch_idx_positions = [distractor_pitch_idx, target_pitch_idx]
 
     return {
         "ITI": random.randint(500, 800),
@@ -61,13 +66,16 @@ def generate_trial_characteristics(conditions, settings):
         "target_position": target_position,
         "target_pitch": target_pitch,
         "target_pitch_cat": target_pitch_cat,
+        "target_pitch_idx": target_pitch_idx,
         "distractor_item": distractor_item,
         "distractor_position": distractor_position,
         "distractor_pitch": distractor_pitch,
         "distractor_pitch_cat": distractor_pitch_cat,
+        "distractor_pitch_idx": distractor_pitch_idx,
         "positions": positions,
         "order_LR": order,
         "pitches_positions": pitches_positions,
+        "pitch_idx_positions": pitch_idx_positions,
         "pitches_order_cat": pitches_order_cat,
         "pitches_order": pitches_order,
     }
@@ -112,13 +120,17 @@ def single_trial(
         (ITI / 1000, lambda: draw_fixation_dot(settings), None),
         (
             0.5,
-            lambda: play_stimulus_frame(positions[0], pitches_order[0], cached_sounds, settings),
+            lambda: play_stimulus_frame(
+                positions[0], pitches_order[0], cached_sounds, settings
+            ),
             "stimulus_onset_1",
         ),
         (0.75, lambda: draw_fixation_dot(settings), None),
         (
             0.5,
-            lambda: play_stimulus_frame(positions[1], pitches_order[1], cached_sounds, settings),
+            lambda: play_stimulus_frame(
+                positions[1], pitches_order[1], cached_sounds, settings
+            ),
             "stimulus_onset_2",
         ),
         (0.75, lambda: draw_fixation_dot(settings), None),
@@ -162,7 +174,9 @@ def single_trial(
         show_text("!", settings["window"], (0, -settings["deg2pix"](0.3)))
 
     if not testing:
-        trigger = get_trigger("feedback_onset", target_pitch_cat, target_item, target_position)
+        trigger = get_trigger(
+            "feedback_onset", target_pitch_cat, target_item, target_position
+        )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
     settings["window"].flip()
