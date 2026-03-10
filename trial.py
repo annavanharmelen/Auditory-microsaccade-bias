@@ -143,7 +143,7 @@ def single_trial(
             None,
             "cue_onset",
         ),
-        (1.00, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
+        (1.25, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
     ]
 
     # !!! The timing you pass to do_while_showing is the timing for the previously drawn screen. !!!
