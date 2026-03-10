@@ -72,7 +72,6 @@ def get_response(
 
     # Let participant change tone frequency until space bar is pressed
     while not responded:
-        keys = keyboard.getKeys(keyList=["down", "up", "space"])
 
         if "space" in keys:
             responded = True
