@@ -90,7 +90,7 @@ def practice_response(stimuli, eyetracker, settings):
 
     except KeyboardInterrupt:
         if len(performance) > 0:
-            avg_score = round(mean(performance))
+            avg_score = round(mean(performance), 1)
             show_text(
                 f"During this practice, your reports were on average off by {avg_score}. "
                 "\nPress SPACE to start practicing full trials.",
@@ -145,7 +145,7 @@ def practice_trials(stimuli, eyetracker, settings):
     except KeyboardInterrupt:
         settings["window"].flip()
         if len(performance) > 0:
-            avg_score = round(mean(performance))
+            avg_score = round(mean(performance), 1)
             show_text(
                 f"During this practice, your reports were on average off by {avg_score}. "
                 "\n\nPress SPACE to start the experiment.",
