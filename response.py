@@ -42,14 +42,6 @@ def get_response(
     # Check for pressed 'q'
     check_quit(keyboard)
 
-    # Show response can start
-    draw_fixation_dot(settings, [-1, -1, -1])
-    settings["window"].flip()
-
-    # These timing systems should start at the same time, this is almost true
-    idle_reaction_time_start = time()
-    keyboard.clock.reset()
-
     # Check if _any_ keys were prematurely pressed
     prematurely_pressed = [(p.name, p.rt) for p in keyboard.getKeys(waitRelease=False)]
     keyboard.clearEvents()
@@ -59,11 +51,18 @@ def get_response(
     idx = floor(len(freqs) / 2)  # use middle index to start
     responded = False
 
-    # Wait for response to start
+    # Show response can start
+    draw_fixation_dot(settings, [-1, -1, -1])
+    settings["window"].flip()
+
+    # These timing systems should start at the same time, this is almost true
+    idle_reaction_time_start = time()
     keyboard.clock.reset()
+
+    # Wait for response to start
     first_keys = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=True)
-    keys = first_keys  # use first key press for first tone generation
     response_started = time()
+    keys = first_keys  # use first key press for first tone generation
 
     if not testing and eyetracker:
         trigger = get_trigger(
