@@ -31,8 +31,7 @@ def practice_response(sounds, eyetracker, settings):
 
         # Show first screen
         show_text(
-            "Welcome!"
-            "\nPress SPACE to start practicing how to reproduce tones.",
+            "Welcome!" "\nPress SPACE to start practicing how to reproduce tones.",
             settings["window"],
         )
         settings["window"].flip()
@@ -55,9 +54,11 @@ def practice_response(sounds, eyetracker, settings):
             sleep(0.5)
 
             # Play tone with certain frequency
-            freq = random.choice(settings["frequencies"][0:5] + settings["frequencies"][6::])
+            freq = random.choice(
+                settings["frequencies"][0:5] + settings["frequencies"][6::]
+            )
             play_stimulus_frame("both", freq, sounds, settings)
-            settings["window"].flip() # even checken of de toon 500 ms duurt
+            settings["window"].flip()  # even checken of de toon 500 ms duurt
 
             # Delay
             draw_fixation_dot(settings)
@@ -65,9 +66,7 @@ def practice_response(sounds, eyetracker, settings):
             wait(0.25)
 
             # Allow response
-            report = get_response(
-                freq, None, None, None, sounds, settings, True, None
-            )
+            report = get_response(freq, None, None, None, sounds, settings, True, None)
 
             # Save for post-hoc feedback
             performance.append(int(report["performance_abs"]))
@@ -95,14 +94,19 @@ def practice_response(sounds, eyetracker, settings):
             check_quit(settings["keyboard"])
 
     except KeyboardInterrupt:
-        avg_score = round(mean(performance))
+        if len(performance) > 0:
+            avg_score = round(mean(performance))
+            show_text(
+                f"During this practice, your reports were on average off by {avg_score}. "
+                "\nPress SPACE to start practicing full trials.",
+                settings["window"],
+            )
+        else:
+            show_text(
+                "You skipped practice 1.\n\nPress SPACE to start practicing full trials.",
+                settings["window"],
+            )
 
-        show_text(
-            f"During this practice, your reports were on average off by {avg_score}. "
-            "You decided to stop practising the basic response. "
-            "Press SPACE to start practicing full trials.",
-            settings["window"],
-        )
         settings["window"].flip()
         if eyetracker:
             keys = wait_for_key(["space", "c"], settings["keyboard"])
@@ -144,15 +148,20 @@ def practice_trials(sounds, eyetracker, settings):
             performance.append(int(report["performance_abs"]))
 
     except KeyboardInterrupt:
-        avg_score = round(mean(performance))
-
         settings["window"].flip()
-        show_text(
-            f"During this practice, your reports were on average off by {avg_score}. "
-            "You decided to stop practicing the trials."
-            f"\n\nPress SPACE to start the experiment.",
-            settings["window"],
-        )
+        if len(performance) > 0:
+            avg_score = round(mean(performance))
+            show_text(
+                f"During this practice, your reports were on average off by {avg_score}. "
+                "\n\nPress SPACE to start the experiment.",
+                settings["window"],
+            )
+        else:
+            show_text(
+                "You skipped practice 2.\n\nPress SPACE to start the experiment.",
+                settings["window"],
+            )
+
         settings["window"].flip()
         if eyetracker:
             keys = wait_for_key(["space", "c"], settings["keyboard"])
