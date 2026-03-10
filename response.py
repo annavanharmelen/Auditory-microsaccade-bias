@@ -91,7 +91,7 @@ def get_response(
             # Start new tone first, then stop old one (avoids clicks)
             cached_sounds[(freqs[idx], "both")].stop()   # ensure tone is back to beginning first
             cached_sounds[(freqs[idx], "both")].play()
-            core.wait(0.005)
+            core.wait(0.005) #5 ms overlap
             if idx != old_idx:
                 cached_sounds[(freqs[old_idx], "both")].stop()
 
