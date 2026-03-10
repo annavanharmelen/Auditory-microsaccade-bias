@@ -11,7 +11,6 @@ from stimuli import show_text
 from response import wait_for_key
 
 
-
 def create_trial_list(n_trials):
     if n_trials % 8 != 0:
         raise Exception(
@@ -22,7 +21,7 @@ def create_trial_list(n_trials):
     target_pitch = n_trials // 2 * ["low"] + n_trials // 2 * ["high"]
 
     # Generate equal distribution of stimulus locations
-    target_position =  2 * (n_trials // 4 * ["left"] + n_trials // 4 * ["right"])
+    target_position = 2 * (n_trials // 4 * ["left"] + n_trials // 4 * ["right"])
 
     # Generate equal distribution of target items
     target_item = n_trials // 2 * [1, 2]

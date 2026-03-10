@@ -17,9 +17,9 @@ from time import time
 from numpy import mean
 from practice import practice
 import datetime as dt
-from block import (   
+from block import (
     create_trial_list,
-    block_break,   
+    block_break,
     long_break,
     finish,
     quick_finish,
@@ -49,7 +49,7 @@ def main():
     monitor, directory = get_monitor_and_dir(testing)
 
     # Get participant details and save in same file as before
-    old_participants = pd.read_csv( 
+    old_participants = pd.read_csv(
         rf"{directory}\participantinfo.csv",
         dtype={
             "participant_number": int,
@@ -104,7 +104,9 @@ def main():
                 current_trial += 1
                 start_time = time()
 
-                trial_characteristics: dict = generate_trial_characteristics(trial, settings)
+                trial_characteristics: dict = generate_trial_characteristics(
+                    trial, settings
+                )
 
                 # Generate trial
                 report: dict = single_trial(
@@ -121,7 +123,7 @@ def main():
                     {
                         "trial_number": current_trial,
                         "block": block_nr + 1,
-                        "block_type": "headphones", # we only do headphones blocks
+                        "block_type": "headphones",  # we only do headphones blocks
                         "start_time": str(
                             dt.timedelta(seconds=(start_time - start_of_experiment))
                         ),
@@ -160,7 +162,6 @@ def main():
                         settings,
                         eyetracker=None if testing else eyelinker,
                     )
-
 
             # Make sure the keystroke from continueing to the next block isn't saved
             settings["keyboard"].clearEvents()
