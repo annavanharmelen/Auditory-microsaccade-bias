@@ -65,7 +65,7 @@ def initialise_all_stimuli(settings):
 
 def show_text(input, window, pos=(0, 0), colour="#ffffff"):
     textstim = visual.TextStim(
-        win=window, font="Courier New", text=input, color=colour, pos=pos, height=22
+        win=window, font="Aptos", text=input, color=colour, pos=pos, height=22
     )
 
     textstim.draw()
