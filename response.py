@@ -81,20 +81,21 @@ def get_response(
 
         elif "down" in keys or "up" in keys:
             old_idx = idx
-        
+
             if "down" in keys:
                 idx = max(idx - 1, 0)
             elif "up" in keys:
                 idx = min(idx + 1, len(freqs) - 1)
-            
+
             # Start new tone first, then stop old one (avoids clicks)
-            cached_sounds[(freqs[idx], "both")].stop()   # ensure tone is back to beginning first
+            cached_sounds[(freqs[idx], "both")].stop()  # ensure tone is back to beginning first
             cached_sounds[(freqs[idx], "both")].play()
-            core.wait(0.005) #5 ms overlap
+            core.wait(0.005)  # 5 ms overlap
             if idx != old_idx:
                 cached_sounds[(freqs[old_idx], "both")].stop()
 
         core.wait(0.01)
+        keys = keyboard.getKeys(keyList=["down", "up", "space"])
 
     # Compute both reaction times
     response_time = time() - response_started
