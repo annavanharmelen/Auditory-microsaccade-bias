@@ -43,7 +43,7 @@ def get_response(
     check_quit(keyboard)
 
     # Check if _any_ keys were prematurely pressed
-    prematurely_pressed = [(p.name, p.rt) for p in keyboard.getKeys(waitRelease=False)]
+    prematurely_pressed = [(k.value, k.t) for k in keyboard.getKeys(clear=False)]
     keyboard.clearEvents()
 
     # Set initial settings
@@ -60,7 +60,7 @@ def get_response(
     keyboard.clock.reset()
 
     # Wait for response to start
-    first_keys = keyboard.waitKeys(keyList=["down", "up", "space"], waitRelease=True)
+    first_keys = keyboard.waitKeys(keyList=["down", "up", "space", "q"], waitRelease=True)
     response_started = time()
     keys = first_keys  # use first key press for first tone generation
 
@@ -77,6 +77,9 @@ def get_response(
             responded = True
             response_freq = freqs[idx]
             response_idx = idx
+
+        elif 'q' in keys:
+            raise KeyboardInterrupt()
 
         elif "down" in keys or "up" in keys:
             old_idx = idx
@@ -135,5 +138,5 @@ def wait_for_key(key_list, keyboard):
 
 
 def check_quit(keyboard):
-    if keyboard.getKeys("q"):
+    if keyboard.getKeys("q", clear=False):
         raise KeyboardInterrupt()
