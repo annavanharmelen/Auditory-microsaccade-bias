@@ -124,14 +124,14 @@ def single_trial(
         (0, lambda: 0 / 0, None, None),  # initial one to make life easier
         (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
-            0.5,
+            0.25,
             lambda: draw_fixation_dot(stimuli["fixation_dot"]),
             lambda: stimuli["sounds"][(pitches_order[0], positions[0])].play(),
             "stimulus_onset_1",
         ),
         (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
-            0.5,
+            0.25,
             lambda: draw_fixation_dot(stimuli["fixation_dot"]),
             lambda: stimuli["sounds"][(pitches_order[1], positions[1])].play(),
             "stimulus_onset_2",

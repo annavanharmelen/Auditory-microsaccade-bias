@@ -19,7 +19,7 @@ AUDIO_SAMPLE_RATE = 44100
 def initialise_all_stimuli(settings):
     cached_sounds = {}
 
-    tone_duration = 0.5  # in seconds
+    tone_duration = 0.25  # in seconds
     sample_times = np.linspace(
         0, tone_duration, int(tone_duration * AUDIO_SAMPLE_RATE), endpoint=False
     )
