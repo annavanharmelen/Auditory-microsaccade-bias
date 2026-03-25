@@ -55,10 +55,7 @@ def get_settings(monitor: dict, directory):
     )
 
     # Create list of used frequencies
-    # frequencies = [200, 227, 257, 291, 330, 374, 424, 481, 545, 618, 700]
-    # frequencies = [750, 804, 862, 923, 990, 1061, 1137, 1218, 1306, 1400, 1500]
-    # frequencies = [750, 772, 794, 818, 841, 866, 891, 917, 944, 972, 1000] # fav so far
-    frequencies = [300, 316, 332, 350, 368, 387, 408, 429, 451, 475, 500] # lower so less annoying, but more perceived loudness diff
+    frequencies = [300, 316, 332, 350, 368, 387, 408, 429, 451, 475, 500]
 
     return dict(
         window=window,
