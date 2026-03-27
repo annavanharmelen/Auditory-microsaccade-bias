@@ -27,7 +27,9 @@ def get_monitor_and_dir(testing: bool):
 
     else:
         # lab
-        prefs.hardware['audioDevice'] = 'XG248Q (2- NVIDIA High Definition Audio)'
+        # prefs.hardware['audioDevice'] = 'XG248Q (2- NVIDIA High Definition Audio)'
+        # prefs.hardware['audioDevice'] = 'Headphones (Realtek(R) Audio)'
+        prefs.hardware['audioDevice'] = 'Speakers (Realtek(R) Audio)'
         monitor = {
             "resolution": (1920, 1080),  # in pixels
             "Hz": 239,  # screen refresh rate in Hz
