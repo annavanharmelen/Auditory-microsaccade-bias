@@ -27,7 +27,7 @@ from block import (
 )
 import traceback
 
-N_BLOCKS = 24
+N_BLOCKS = 20
 TRIALS_PER_BLOCK = 24
 
 
