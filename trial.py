@@ -14,6 +14,7 @@ from response import get_response, check_quit
 from stimuli import (
     show_text,
     draw_fixation_dot,
+    create_stimulus_frame,
     create_cue_frame,
     create_feedback_frame,
 )
@@ -125,14 +126,24 @@ def single_trial(
         (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
             0.25,
-            lambda: draw_fixation_dot(stimuli["fixation_dot"]),
+            lambda: create_stimulus_frame(
+                stimuli["visual_object"],
+                positions[0],
+                stimuli["fixation_dot"],
+                settings,
+            ),
             lambda: stimuli["sounds"][(pitches_order[0], positions[0])].play(),
             "stimulus_onset_1",
         ),
         (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None, None),
         (
             0.25,
-            lambda: draw_fixation_dot(stimuli["fixation_dot"]),
+            lambda: create_stimulus_frame(
+                stimuli["visual_object"],
+                positions[1],
+                stimuli["fixation_dot"],
+                settings,
+            ),
             lambda: stimuli["sounds"][(pitches_order[1], positions[1])].play(),
             "stimulus_onset_2",
         ),
@@ -157,7 +168,9 @@ def single_trial(
         check_quit(settings["keyboard"])
 
         # Draw the next screen while showing the current one
-        do_while_showing(duration, screens[index + 1][1], settings["window"], screens[index][2])
+        do_while_showing(
+            duration, screens[index + 1][1], settings["window"], screens[index][2]
+        )
 
     # The for loop only draws the last frame, never shows it
     # So show it here

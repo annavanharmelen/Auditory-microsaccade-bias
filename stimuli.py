@@ -10,6 +10,7 @@ from psychopy import visual, sound, core
 import numpy as np
 
 DOT_SIZE = 0.1  # diameter of circle
+OBJECT_SIZE = 1  # diameter of circle
 ECCENTRICITY = 6
 ITEM_SIZE = 1
 
@@ -69,9 +70,20 @@ def initialise_all_stimuli(settings):
         fillColor="#eaeaea",
     )
 
+    # Make visual object
+    visual_object = visual.Circle(
+        win=settings["window"],
+        units="pix",
+        radius=settings["deg2pix"](OBJECT_SIZE),
+        pos=(0, 0),
+        fillColor="#eaeaea",
+    )
+
+
     return {
         "sounds": cached_sounds,
         "fixation_dot": fixation_dot,
+        "visual_object": visual_object,
     }
 
 
@@ -87,6 +99,18 @@ def draw_fixation_dot(fixation_dot, colour="#eaeaea"):
     fixation_dot.fillColor = colour
     fixation_dot.draw()
 
+def draw_visual_object(visual_object, position, settings):
+    if position == "left":
+        pos = (-settings["deg2pix"](ECCENTRICITY), 0)
+    elif position == "right":
+        pos = (settings["deg2pix"](ECCENTRICITY), 0)
+
+    visual_object.pos = pos
+    visual_object.draw()
+
+def create_stimulus_frame(visual_object, position, fixation_dot, settings):
+    draw_fixation_dot(fixation_dot)
+    draw_visual_object(visual_object, position, settings)
 
 def create_cue_frame(target_item, fixation_dot, settings):
     draw_fixation_dot(fixation_dot)
