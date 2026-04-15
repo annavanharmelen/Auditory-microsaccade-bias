@@ -9,9 +9,9 @@ made by Anna van Harmelen, 2025
 from psychopy import visual, sound, core
 import numpy as np
 
-DOT_SIZE = 0.1  # diameter of circle
-OBJECT_SIZE = 1  # diameter of circle
-ECCENTRICITY = 6
+DOT_SIZE = 0.1  # radius of circle
+OBJECT_SIZE = 0.5  # radius of circle
+ECCENTRICITY = 7.5
 ITEM_SIZE = 1
 
 AUDIO_SAMPLE_RATE = 44100
