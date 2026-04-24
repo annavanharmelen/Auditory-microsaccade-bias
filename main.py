@@ -18,7 +18,9 @@ from numpy import mean
 from practice import practice
 import datetime as dt
 from block import (
+    create_block_list,
     create_trial_list,
+    show_block_type,
     block_break,
     long_break,
     finish,
@@ -40,7 +42,7 @@ def main():
     """
 
     # Set whether this is a test run or not
-    testing = False
+    testing = True
 
     # first things first: ignore warnings
     logging.console.setLevel(logging.ERROR)
@@ -92,9 +94,23 @@ def main():
 
     # Start experiment
     try:
-        for block_nr in range(N_BLOCKS):
+        blocks = create_block_list(N_BLOCKS)
+
+        for block_nr, block_type in enumerate(blocks):
             # Pseudo-randomly create conditions and target locations (so they're weighted)
             trials = create_trial_list(8 if testing else TRIALS_PER_BLOCK)
+
+            # Remind participant of block type
+            calibrated = True
+            while calibrated:
+                calibrated = show_block_type(
+                    block_type,
+                    settings,
+                    eyetracker=None if testing else eyelinker,
+                )
+
+            # Clear keyboard cache before starting again
+            settings["keyboard"].clearEvents()
 
             # Create temporary variable for saving block performance
             block_performance = []
@@ -112,6 +128,7 @@ def main():
                 report: dict = single_trial(
                     **trial_characteristics,
                     stimuli=stimuli,
+                    block_type=block_type,
                     settings=settings,
                     testing=testing,
                     eyetracker=None if testing else eyelinker,

@@ -13,6 +13,8 @@ DOT_SIZE = 0.1  # radius of circle
 OBJECT_SIZE = 0.5  # radius of circle
 ECCENTRICITY = 7.5
 ITEM_SIZE = 1
+COLOUR_WIDTH = 2
+COLOUR_HEIGHT = 1
 
 AUDIO_SAMPLE_RATE = 44100
 
@@ -61,6 +63,40 @@ def initialise_all_stimuli(settings):
             waveform, stereo=False, sampleRate=AUDIO_SAMPLE_RATE
         )
 
+    # Draw the colour ladder using segments
+    colour_ladder = []
+    bar_width = settings["deg2pix"](COLOUR_WIDTH)
+    bar_height = settings["deg2pix"](COLOUR_HEIGHT)
+    colours = settings["colours"]
+    total_height = len(colours) * bar_height
+    start_y = -total_height / 2  # starting at the bottom to keep the ladder centered
+
+    for i, colour in enumerate(colours):
+        # Calculate position of step in ladder
+        y_center = start_y + (i * bar_height) + (bar_height / 2)
+
+        # Create a wedge for each segment
+        step = visual.Rect(
+            settings["window"],
+            width=bar_width,
+            height=bar_height,
+            pos=(0, y_center),
+            fillColor=colour,
+            lineColor=None,
+            colorSpace="hsv",
+        )
+        colour_ladder.append(step)
+
+    # Create a marker for the selected colour preview
+    marker = visual.Rect(
+        settings["window"],
+        width=bar_width + 50,
+        height=bar_height,
+        fillColor=None,
+        lineColor=(1, 0, 1),
+        colorSpace="hsv",
+    )
+
     # Make fixation dot
     fixation_dot = visual.Circle(
         win=settings["window"],
@@ -77,13 +113,15 @@ def initialise_all_stimuli(settings):
         radius=settings["deg2pix"](OBJECT_SIZE),
         pos=(0, 0),
         fillColor="#eaeaea",
+        colorSpace="hsv",
     )
-
 
     return {
         "sounds": cached_sounds,
         "fixation_dot": fixation_dot,
         "visual_object": visual_object,
+        "colour_ladder": colour_ladder,
+        "marker": marker,
     }
 
 
@@ -99,18 +137,24 @@ def draw_fixation_dot(fixation_dot, colour="#eaeaea"):
     fixation_dot.fillColor = colour
     fixation_dot.draw()
 
-def draw_visual_object(visual_object, position, settings):
+
+def draw_visual_object(visual_object, colour, position, settings):
     if position == "left":
         pos = (-settings["deg2pix"](ECCENTRICITY), 0)
     elif position == "right":
         pos = (settings["deg2pix"](ECCENTRICITY), 0)
+    else:
+        pos = (0, 0)
 
+    visual_object.fillColor = colour
     visual_object.pos = pos
     visual_object.draw()
 
-def create_stimulus_frame(visual_object, position, fixation_dot, settings):
+
+def create_stimulus_frame(visual_object, colour, position, fixation_dot, settings):
     draw_fixation_dot(fixation_dot)
-    draw_visual_object(visual_object, position, settings)
+    draw_visual_object(visual_object, colour, position, settings)
+
 
 def create_cue_frame(target_item, fixation_dot, settings):
     draw_fixation_dot(fixation_dot)

@@ -16,6 +16,7 @@ def get_monitor_and_dir(testing: bool):
 
     if testing:
         # laptop
+        # prefs.hardware["audioDevice"] = "Speakers (Realtek(R) Audio)"
         monitor = {
             "resolution": (2880, 1800),  # in pixels
             "Hz": 120,  # screen refresh rate in Hz
@@ -29,7 +30,7 @@ def get_monitor_and_dir(testing: bool):
         # lab
         # prefs.hardware['audioDevice'] = 'XG248Q (2- NVIDIA High Definition Audio)'
         # prefs.hardware['audioDevice'] = 'Headphones (Realtek(R) Audio)'
-        prefs.hardware['audioDevice'] = 'Speakers (Realtek(R) Audio)'
+        prefs.hardware["audioDevice"] = "Speakers (Realtek(R) Audio)"
         monitor = {
             "resolution": (1920, 1080),  # in pixels
             "Hz": 239,  # screen refresh rate in Hz
@@ -59,10 +60,26 @@ def get_settings(monitor: dict, directory):
     # Create list of used frequencies
     frequencies = [300, 316, 332, 350, 368, 387, 408, 429, 451, 475, 500]
 
+    # Determine colour range
+    colours = [
+        [
+            hue,  # Hue
+            0.2,  # Saturation
+            0.5,  # Lightness
+        ]
+        for hue in [210, 180, 150, 120, 90, 60, 30, 0, 330, 300, 270]
+    ]
+
+    stimuli_colours = (
+        colours[:5] + colours[6:]
+    )  # not all 12 colours can be used for stimuli
+
     return dict(
         window=window,
         deg2pix=lambda deg: round(deg / degrees_per_pixel),
         frequencies=frequencies,
+        colours=colours,
+        stimuli_colours=stimuli_colours,
         keyboard=Keyboard(),
         mouse=visual.CustomMouse(win=window, visible=False),
         monitor=monitor,

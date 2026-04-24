@@ -10,7 +10,7 @@ made by Anna van Harmelen, 2025
 from psychopy import visual
 from psychopy.core import wait
 from time import time, sleep
-from response import get_response, check_quit
+from response import get_auditory_response, get_visual_response, check_quit
 from stimuli import (
     show_text,
     draw_fixation_dot,
@@ -41,6 +41,14 @@ def generate_trial_characteristics(conditions, settings):
     target_pitch_idx = settings["frequencies"].index(target_pitch)
     distractor_pitch_idx = settings["frequencies"].index(distractor_pitch)
 
+    target_colour_idx = random.randrange(len(settings["stimuli_colours"]))
+    distractor_colour_idx = random.randrange(len(settings["stimuli_colours"]) - 1)
+    if distractor_colour_idx >= target_colour_idx:
+        distractor_colour_idx += 1
+
+    target_colour = settings["stimuli_colours"][target_colour_idx]
+    distractor_colour = settings["stimuli_colours"][distractor_colour_idx]
+
     if target_position == "left":
         order = [target_item, distractor_item]
         pitches_positions = [target_pitch_cat, distractor_pitch_cat]
@@ -50,12 +58,14 @@ def generate_trial_characteristics(conditions, settings):
 
     if target_item == 1:
         positions = [target_position, distractor_position]
+        colours = [target_colour, distractor_colour]
         pitches_order_cat = [target_pitch_cat, distractor_pitch_cat]
         pitches_order = [target_pitch, distractor_pitch]
         pitch_idx_positions = [target_pitch_idx, distractor_pitch_idx]
 
     else:
         positions = [distractor_position, target_position]
+        colours = [distractor_colour, target_colour]
         pitches_order_cat = [distractor_pitch_cat, target_pitch_cat]
         pitches_order = [distractor_pitch, target_pitch]
         pitch_idx_positions = [distractor_pitch_idx, target_pitch_idx]
@@ -67,13 +77,16 @@ def generate_trial_characteristics(conditions, settings):
         "target_pitch": target_pitch,
         "target_pitch_cat": target_pitch_cat,
         "target_pitch_idx": target_pitch_idx,
+        "target_colour": target_colour,
         "distractor_item": distractor_item,
         "distractor_position": distractor_position,
         "distractor_pitch": distractor_pitch,
         "distractor_pitch_cat": distractor_pitch_cat,
         "distractor_pitch_idx": distractor_pitch_idx,
+        "distractor_colour": distractor_colour,
         "positions": positions,
         "order_LR": order,
+        "colours": colours,
         "pitches_positions": pitches_positions,
         "pitch_idx_positions": pitch_idx_positions,
         "pitches_order_cat": pitches_order_cat,
@@ -101,18 +114,22 @@ def single_trial(
     target_pitch,
     target_pitch_cat,
     target_pitch_idx,
+    target_colour,
     distractor_item,
     distractor_position,
     distractor_pitch,
     distractor_pitch_cat,
     distractor_pitch_idx,
+    distractor_colour,
     positions,
     order_LR,
+    colours,
     pitches_positions,
     pitch_idx_positions,
     pitches_order_cat,
     pitches_order,
     stimuli,
+    block_type,
     settings,
     testing,
     eyetracker=None,
@@ -128,6 +145,7 @@ def single_trial(
             0.25,
             lambda: create_stimulus_frame(
                 stimuli["visual_object"],
+                colours[0],
                 positions[0],
                 stimuli["fixation_dot"],
                 settings,
@@ -140,6 +158,7 @@ def single_trial(
             0.25,
             lambda: create_stimulus_frame(
                 stimuli["visual_object"],
+                colours[1],
                 positions[1],
                 stimuli["fixation_dot"],
                 settings,
@@ -177,16 +196,28 @@ def single_trial(
     settings["window"].flip()
     wait(screens[-1][0])
 
-    response = get_response(
-        target_pitch,
-        target_pitch_cat,
-        target_item,
-        target_position,
-        stimuli,
-        settings,
-        testing,
-        eyetracker,
-    )
+    if block_type == "auditory":
+        response = get_auditory_response(
+            target_pitch,
+            target_pitch_cat,
+            target_item,
+            target_position,
+            stimuli,
+            settings,
+            testing,
+            eyetracker,
+        )
+    elif block_type == "visual":
+        response = get_visual_response(
+            target_colour,
+            target_pitch_cat,
+            target_item,
+            target_position,
+            stimuli,
+            settings,
+            testing,
+            eyetracker,
+        )
 
     # Show performance (and feedback on premature key usage if necessary)
     create_feedback_frame(response["performance"], stimuli["fixation_dot"], settings)

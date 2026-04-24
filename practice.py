@@ -8,30 +8,114 @@ made by Anna van Harmelen, 2025
 
 import random
 from trial import generate_trial_characteristics
-from stimuli import draw_fixation_dot, show_text
+from stimuli import draw_fixation_dot, show_text, draw_visual_object
 from psychopy.core import wait
-from response import get_response, check_quit, wait_for_key
+from response import (
+    get_auditory_response,
+    get_visual_response,
+    check_quit,
+    wait_for_key,
+)
 from time import sleep
 from trial import single_trial
 from numpy import mean
 
 
 def practice(stimuli, eyetracker, settings):
-    # Practice response itself
-    practice_response(stimuli, eyetracker, settings)
+    # Show first screen
+    show_text(
+        "Welcome!" "\nPress SPACE to start practicing how to reproduce SOUNDS.",
+        settings["window"],
+    )
+    settings["window"].flip()
+    if eyetracker:
+        keys = wait_for_key(["space", "c"], settings["keyboard"])
+        if "c" in keys:
+            eyetracker.calibrate()
+            eyetracker.start()
+            return True
+    else:
+        wait_for_key(["space"], settings["keyboard"])
 
-    # Practice full trials
-    practice_trials(stimuli, eyetracker, settings)
+    # Make sure the keystroke from starting the experiment isn't saved
+    settings["keyboard"].clearEvents()
+
+    # Practice full trials - auditory
+    practice_trials(stimuli, "auditory", eyetracker, settings)
+
+    # Practice full trials - visual
+    practice_trials(stimuli, "visual", eyetracker, settings)
 
 
-def practice_response(stimuli, eyetracker, settings):
+def practice_trials(stimuli, block_type, eyetracker, settings):
+    # Practice full trials until participant chooses to stop
+    try:
+        performance = []
+
+        while True:
+            target_pitch = random.choice(["low", "high"])
+            target_position = random.choice(["left", "right"])
+            target_item = random.choice([1, 2])
+
+            trial_characteristics = generate_trial_characteristics(
+                (target_pitch, target_position, target_item), settings
+            )
+
+            # Generate trial
+            report = single_trial(
+                **trial_characteristics,
+                stimuli=stimuli,
+                block_type=block_type,
+                settings=settings,
+                testing=True,
+                eyetracker=None,
+            )
+
+            # Save for feedback
+            performance.append(int(report["performance_abs"]))
+
+    except KeyboardInterrupt:
+        if block_type == "auditory":
+            final_sentence = "Press SPACE to start practicing how to reproduce COLOURS."
+        else:
+            final_sentence = "Press SPACE to start the experiment."
+
+        settings["window"].flip()
+        if len(performance) > 0:
+            avg_score = round(mean(performance), 1)
+            show_text(
+                f"During this practice, your reports were on average off by {avg_score}. "
+                f"\n\n{final_sentence}",
+                settings["window"],
+            )
+        else:
+            show_text(
+                f"You skipped practice 2.\n\n{final_sentence}",
+                settings["window"],
+            )
+
+        settings["window"].flip()
+        if eyetracker:
+            keys = wait_for_key(["space", "c"], settings["keyboard"])
+            if "c" in keys:
+                eyetracker.calibrate()
+                eyetracker.start()
+                return True
+        else:
+            wait_for_key(["space"], settings["keyboard"])
+
+        # Make sure the keystroke from starting the experiment isn't saved
+        settings["keyboard"].clearEvents()
+
+
+def practice_auditory_response(stimuli, eyetracker, settings):
     # Practice response until participant chooses to stop
     try:
         performance = []
 
         # Show first screen
         show_text(
-            "Welcome!" "\nPress SPACE to start practicing how to reproduce tones.",
+            "Welcome!" "\nPress SPACE to start practicing how to reproduce SOUNDS.",
             settings["window"],
         )
         settings["window"].flip()
@@ -58,10 +142,12 @@ def practice_response(stimuli, eyetracker, settings):
                 settings["frequencies"][0:5] + settings["frequencies"][6::]
             )
             stimuli["sounds"][(freq, "both")].play()
-            wait(0.75)  # wait tone duration + 250 ms
+            sleep(0.5)  # wait tone duration + 250 ms
 
             # Allow response
-            report = get_response(freq, None, None, None, stimuli, settings, True, None)
+            report = get_auditory_response(
+                freq, None, None, None, stimuli, settings, True, None
+            )
 
             # Save for post-hoc feedback
             performance.append(int(report["performance_abs"]))
@@ -98,7 +184,7 @@ def practice_response(stimuli, eyetracker, settings):
             )
         else:
             show_text(
-                "You skipped practice 1.\n\nPress SPACE to start practicing full trials.",
+                "You skipped practice 1.\n\nPress SPACE to practice the next part.",
                 settings["window"],
             )
 
@@ -116,44 +202,87 @@ def practice_response(stimuli, eyetracker, settings):
         settings["keyboard"].clearEvents()
 
 
-def practice_trials(stimuli, eyetracker, settings):
-    # Practice full trials until participant chooses to stop
+def practice_visual_response(stimuli, eyetracker, settings):
+    # Practice response until participant chooses to stop
     try:
         performance = []
 
+        # Show first screen
+        show_text(
+            "Welcome!" "\nPress SPACE to start practicing how to reproduce COLOURS.",
+            settings["window"],
+        )
+        settings["window"].flip()
+        if eyetracker:
+            keys = wait_for_key(["space", "c"], settings["keyboard"])
+            if "c" in keys:
+                eyetracker.calibrate()
+                eyetracker.start()
+                return True
+        else:
+            wait_for_key(["space"], settings["keyboard"])
+
+        # Make sure the keystroke from starting the experiment isn't saved
+        settings["keyboard"].clearEvents()
+
         while True:
-            target_pitch = random.choice(["low", "high"])
-            target_position = random.choice(["left", "right"])
-            target_item = random.choice([1, 2])
+            # Show fixation dot in preparation
+            draw_fixation_dot(stimuli["fixation_dot"])
+            settings["window"].flip()
+            sleep(0.25)
 
-            trial_characteristics = generate_trial_characteristics(
-                (target_pitch, target_position, target_item), settings
+            # Show dot with random colour
+            colour = random.choice(settings["stimuli_colours"])
+            draw_visual_object(stimuli["visual_object"], colour, "middle", settings)
+            settings["window"].flip()
+            sleep(0.25)
+
+            # Show fixation dot until time to respond
+            draw_fixation_dot(stimuli["fixation_dot"])
+            settings["window"].flip()
+            sleep(0.5)
+
+            # Allow response
+            report = get_visual_response(
+                colour, None, None, None, stimuli, settings, True, None
             )
 
-            # Generate trial
-            report = single_trial(
-                **trial_characteristics,
-                stimuli=stimuli,
-                settings=settings,
-                testing=True,
-                eyetracker=None,
-            )
-
-            # Save for feedback
+            # Save for post-hoc feedback
             performance.append(int(report["performance_abs"]))
 
+            # Show feedback
+            draw_fixation_dot(stimuli["fixation_dot"])
+            show_text(
+                f"{report['performance']}",
+                settings["window"],
+                (0, settings["deg2pix"](0.3)),
+            )
+
+            if report["premature_pressed"] == True:
+                show_text("!", settings["window"], (0, -settings["deg2pix"](0.3)))
+
+            settings["window"].flip()
+            sleep(0.25)
+
+            # Pause before next one
+            draw_fixation_dot(stimuli["fixation_dot"])
+            settings["window"].flip()
+            sleep(random.randint(1500, 2000) / 1000)
+
+            # Check for pressed 'q'
+            check_quit(settings["keyboard"])
+
     except KeyboardInterrupt:
-        settings["window"].flip()
         if len(performance) > 0:
             avg_score = round(mean(performance), 1)
             show_text(
                 f"During this practice, your reports were on average off by {avg_score}. "
-                "\n\nPress SPACE to start the experiment.",
+                "\nPress SPACE to start practicing full trials.",
                 settings["window"],
             )
         else:
             show_text(
-                "You skipped practice 2.\n\nPress SPACE to start the experiment.",
+                "You skipped practice 1.\n\nPress SPACE to practice the next part.",
                 settings["window"],
             )
 
@@ -167,5 +296,5 @@ def practice_trials(stimuli, eyetracker, settings):
         else:
             wait_for_key(["space"], settings["keyboard"])
 
-        # Make sure the keystroke from starting the experiment isn't saved
+        # Make sure the keystroke from moving to the next part isn't saved
         settings["keyboard"].clearEvents()
