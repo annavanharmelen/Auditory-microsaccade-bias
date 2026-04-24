@@ -24,7 +24,7 @@ def get_monitor_and_dir(testing: bool):
             "distance": 50,  # in cm
         }
 
-        directory = r"../../Data/test/"
+        directory = r"../../Data/test2/"
 
     else:
         # lab

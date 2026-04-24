@@ -11,19 +11,6 @@ from stimuli import show_text
 from response import wait_for_key
 
 
-def create_block_list(n_blocks):
-    if n_blocks % 2 != 0:
-        raise Exception(
-            "Expected number of blocks to be divisible by 2, so each block type occurs equally often."
-        )
-
-    # Determine block type and shuffle
-    block_types = n_blocks // 2 * ["visual"] + n_blocks // 2 * ["auditory"]
-    # random.shuffle(block_types)
-
-    return block_types
-
-
 def create_trial_list(n_trials):
     if n_trials % 8 != 0:
         raise Exception(
@@ -69,34 +56,6 @@ def block_break(current_block, n_blocks, avg_score, settings, eyetracker):
         wait_for_key(["space"], settings["keyboard"])
 
     # Make sure the keystroke from starting the experiment isn't saved
-    settings["keyboard"].clearEvents()
-
-    return False
-
-
-def show_block_type(upcoming_block, settings, eyetracker):
-    if upcoming_block == "auditory":
-        show_text(
-            f"respond SOUND\n\npress SPACE to continue",
-            settings["window"],
-        )
-    elif upcoming_block == "visual":
-        show_text(
-            f"respond COLOUR\n\npress SPACE to continue",
-            settings["window"],
-        )
-    settings["window"].flip()
-
-    if eyetracker:
-        keys = wait_for_key(["space", "c"], settings["keyboard"])
-        if "c" in keys:
-            eyetracker.calibrate()
-            eyetracker.start()
-            return True
-    else:
-        wait_for_key(["space"], settings["keyboard"])
-
-    # Make sure the keystroke from starting the next block isn't saved
     settings["keyboard"].clearEvents()
 
     return False

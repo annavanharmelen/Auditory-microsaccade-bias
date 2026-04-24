@@ -18,9 +18,7 @@ from numpy import mean
 from practice import practice
 import datetime as dt
 from block import (
-    create_block_list,
     create_trial_list,
-    show_block_type,
     block_break,
     long_break,
     finish,
@@ -29,7 +27,7 @@ from block import (
 )
 import traceback
 
-N_BLOCKS = 20
+N_BLOCKS = 16
 TRIALS_PER_BLOCK = 24
 
 
@@ -56,11 +54,13 @@ def main():
         dtype={
             "participant_number": int,
             "session_number": int,
+            "session_within_pp": int,
             "age": int,
+            "start_block_type": str,
             "trials_completed": str,
         },
     )
-    new_participants = get_participant_details(old_participants, testing)
+    new_participants, current_block_type = get_participant_details(old_participants, testing)
 
     # Initialise set-up
     settings = get_settings(monitor, directory)
@@ -84,7 +84,7 @@ def main():
     stimuli = initialise_all_stimuli(settings)
 
     # Practice until participant wants to stop
-    practice(stimuli, None if testing else eyelinker, settings)
+    practice(current_block_type, stimuli, None if testing else eyelinker, settings)
 
     # Initialise some stuff
     start_of_experiment = time()
@@ -94,20 +94,9 @@ def main():
 
     # Start experiment
     try:
-        blocks = create_block_list(N_BLOCKS)
-
-        for block_nr, block_type in enumerate(blocks):
+        for block_nr in range(2 if testing else N_BLOCKS):
             # Pseudo-randomly create conditions and target locations (so they're weighted)
             trials = create_trial_list(8 if testing else TRIALS_PER_BLOCK)
-
-            # Remind participant of block type
-            calibrated = True
-            while calibrated:
-                calibrated = show_block_type(
-                    block_type,
-                    settings,
-                    eyetracker=None if testing else eyelinker,
-                )
 
             # Clear keyboard cache before starting again
             settings["keyboard"].clearEvents()
@@ -128,7 +117,7 @@ def main():
                 report: dict = single_trial(
                     **trial_characteristics,
                     stimuli=stimuli,
-                    block_type=block_type,
+                    block_type=current_block_type,
                     settings=settings,
                     testing=testing,
                     eyetracker=None if testing else eyelinker,
