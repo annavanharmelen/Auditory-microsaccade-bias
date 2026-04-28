@@ -27,8 +27,8 @@ from block import (
 )
 import traceback
 
-N_BLOCKS = 16
-TRIALS_PER_BLOCK = 24
+N_BLOCKS = 12
+TRIALS_PER_BLOCK = 32
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
     """
 
     # Set whether this is a test run or not
-    testing = True
+    testing = False
 
     # first things first: ignore warnings
     logging.console.setLevel(logging.ERROR)

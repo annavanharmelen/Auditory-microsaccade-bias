@@ -24,7 +24,7 @@ import random
 
 def generate_trial_characteristics(conditions, settings):
     # Extract condition information
-    target_pitch_cat, target_position, target_item = conditions
+    target_pitch_cat, target_colour_cat, target_position, target_item = conditions
 
     pitch_dict = {
         "low": random.choice(settings["frequencies"][:5]),
@@ -41,13 +41,17 @@ def generate_trial_characteristics(conditions, settings):
     target_pitch_idx = settings["frequencies"].index(target_pitch)
     distractor_pitch_idx = settings["frequencies"].index(distractor_pitch)
 
-    target_colour_idx = random.randrange(len(settings["stimuli_colours"]))
-    distractor_colour_idx = random.randrange(len(settings["stimuli_colours"]) - 1)
-    if distractor_colour_idx >= target_colour_idx:
-        distractor_colour_idx += 1
+    colour_dict = {
+        "low": random.choice(settings["stimuli_colours"][:5]),
+        "high": random.choice(settings["stimuli_colours"][6:]),
+    }
 
-    target_colour = settings["stimuli_colours"][target_colour_idx]
-    distractor_colour = settings["stimuli_colours"][distractor_colour_idx]
+    target_colour = colour_dict[target_colour_cat]
+    distractor_colour_cat = {"high": "low", "low": "high"}[target_colour_cat]
+    distractor_colour = colour_dict[distractor_colour_cat]
+
+    target_colour_idx = settings["stimuli_colours"].index(target_colour)
+    distractor_colour_idx = settings["stimuli_colours"].index(distractor_colour)
 
     if target_position == "left":
         order = [target_item, distractor_item]
@@ -78,12 +82,16 @@ def generate_trial_characteristics(conditions, settings):
         "target_pitch_cat": target_pitch_cat,
         "target_pitch_idx": target_pitch_idx,
         "target_colour": target_colour,
+        "target_colour_cat": target_colour_cat,
+        "target_colour_idx": target_colour_idx,
         "distractor_item": distractor_item,
         "distractor_position": distractor_position,
         "distractor_pitch": distractor_pitch,
         "distractor_pitch_cat": distractor_pitch_cat,
         "distractor_pitch_idx": distractor_pitch_idx,
         "distractor_colour": distractor_colour,
+        "distractor_colour_cat": distractor_colour_cat,
+        "distractor_colour_idx": distractor_colour_idx,
         "positions": positions,
         "order_LR": order,
         "colours": colours,
@@ -115,12 +123,16 @@ def single_trial(
     target_pitch_cat,
     target_pitch_idx,
     target_colour,
+    target_colour_cat,
+    target_colour_idx,
     distractor_item,
     distractor_position,
     distractor_pitch,
     distractor_pitch_cat,
     distractor_pitch_idx,
     distractor_colour,
+    distractor_colour_cat,
+    distractor_colour_idx,
     positions,
     order_LR,
     colours,
@@ -180,7 +192,7 @@ def single_trial(
     for index, (duration, _, _, frame) in enumerate(screens[:-1]):
         # Send trigger if not testing
         if not testing and frame:
-            trigger = get_trigger(frame, target_pitch_cat, target_item, target_position)
+            trigger = get_trigger(frame, target_pitch_cat, target_colour_cat, target_item, target_position)
             eyetracker.tracker.send_message(f"trig{trigger}")
 
         # Check for pressed 'q'
@@ -202,6 +214,7 @@ def single_trial(
             target_pitch_cat,
             target_item,
             target_position,
+            target_colour_cat,
             stimuli,
             settings,
             testing,
@@ -210,6 +223,7 @@ def single_trial(
     elif block_type == "visual":
         response = get_visual_response(
             target_colour,
+            target_colour_cat,
             target_pitch_cat,
             target_item,
             target_position,
@@ -227,7 +241,7 @@ def single_trial(
 
     if not testing:
         trigger = get_trigger(
-            "feedback_onset", target_pitch_cat, target_item, target_position
+            "feedback_onset", target_pitch_cat, target_colour_cat, target_item, target_position
         )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
@@ -236,7 +250,7 @@ def single_trial(
 
     return {
         "condition_code": get_trigger(
-            "stimulus_onset_1", target_pitch_cat, target_item, target_position
+            "stimulus_onset_1", target_pitch_cat, target_colour_cat, target_item, target_position
         ),
         **response,
     }

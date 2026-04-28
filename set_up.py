@@ -38,7 +38,7 @@ def get_monitor_and_dir(testing: bool):
             "distance": 70,  # in cm
         }
 
-        directory = r"C:/Users/vidi_asa/Desktop/Auditory data/"
+        directory = r"C:/Users/Anna_vidi/Desktop/Auditory data/"
 
     return monitor, directory
 
@@ -67,7 +67,7 @@ def get_settings(monitor: dict, directory):
             0.2,  # Saturation
             0.5,  # Lightness
         ]
-        for hue in [210, 180, 150, 120, 90, 60, 30, 0, 330, 300, 270]
+        for hue in [105, 90, 75, 60, 45, 30, 15, 0, 345, 330, 315]
     ]
 
     stimuli_colours = (

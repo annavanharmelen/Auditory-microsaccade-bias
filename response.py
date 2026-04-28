@@ -58,6 +58,7 @@ def get_auditory_response(
     target_pitch_cat,
     target_item,
     target_position,
+    target_colour_cat,
     stimuli,
     settings,
     testing,
@@ -94,7 +95,7 @@ def get_auditory_response(
 
     if not testing and eyetracker:
         trigger = get_trigger(
-            "response_onset", target_pitch_cat, target_item, target_position
+            "response_onset", target_pitch_cat, target_colour_cat, target_item, target_position
         )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
@@ -135,7 +136,7 @@ def get_auditory_response(
 
     if not testing and eyetracker:
         trigger = get_trigger(
-            "response_offset", target_pitch_cat, target_item, target_position
+            "response_offset", target_pitch_cat, target_colour_cat, target_item, target_position
         )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
@@ -159,6 +160,7 @@ def get_auditory_response(
 
 def get_visual_response(
     target_colour,
+    target_colour_cat,
     target_pitch_cat,
     target_item,
     target_position,
@@ -200,7 +202,7 @@ def get_visual_response(
 
     if not testing and eyetracker:
         trigger = get_trigger(
-            "response_onset", target_pitch_cat, target_item, target_position
+            "response_onset", target_pitch_cat, target_colour_cat, target_item, target_position
         )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
@@ -240,7 +242,7 @@ def get_visual_response(
 
     if not testing and eyetracker:
         trigger = get_trigger(
-            "response_offset", target_pitch_cat, target_item, target_position
+            "response_offset", target_pitch_cat, target_colour_cat, target_item, target_position
         )
         eyetracker.tracker.send_message(f"trig{trigger}")
 
