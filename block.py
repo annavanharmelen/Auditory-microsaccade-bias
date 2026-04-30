@@ -14,7 +14,7 @@ from response import wait_for_key
 def create_trial_list(n_trials):
     if n_trials % 16 != 0:
         raise Exception(
-            "Expected number of trials to be divisible by 8, otherwise perfect factorial combinations are not possible."
+            "Expected number of trials to be divisible by 16, otherwise perfect factorial combinations are not possible."
         )
 
     # Determine pitches counterweighted with locations

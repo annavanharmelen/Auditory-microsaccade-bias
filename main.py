@@ -96,7 +96,7 @@ def main():
     try:
         for block_nr in range(2 if testing else N_BLOCKS):
             # Pseudo-randomly create conditions and target locations (so they're weighted)
-            trials = create_trial_list(8 if testing else TRIALS_PER_BLOCK)
+            trials = create_trial_list(16 if testing else TRIALS_PER_BLOCK)
 
             # Clear keyboard cache before starting again
             settings["keyboard"].clearEvents()
