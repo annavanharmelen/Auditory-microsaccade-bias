@@ -57,6 +57,7 @@ def main():
             "session_within_pp": int,
             "age": int,
             "start_block_type": str,
+            "current_block_type": str,
             "trials_completed": str,
         },
     )
