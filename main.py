@@ -72,6 +72,7 @@ def main():
         eyelinker = Eyelinker(
             new_participants.participant_number.iloc[-1],
             new_participants.session_number.iloc[-1],
+            new_participants.session_within_pp.iloc[-1],
             settings["window"],
             settings["directory"],
         )
@@ -187,7 +188,7 @@ def main():
 
         # Save all collected trial data to a new .csv
         pd.DataFrame(data).to_csv(
-            rf"{settings['directory']}\data_session_{new_participants.session_number.iloc[-1]}{'_test' if testing else ''}.csv",
+            rf"{settings['directory']}\data_session_{new_participants.session_number.iloc[-1]}_{new_participants.session_within_pp.iloc[-1]}{'_test' if testing else ''}.csv",
             index=False,
         )
 

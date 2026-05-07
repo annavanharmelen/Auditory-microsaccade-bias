@@ -3,7 +3,7 @@ This file contains the functions necessary for
 connecting and using the eyetracker.
 To run the 'microsaccade bias duration' experiment, see main.py.
 
-made by Anna van Harmelen, 2025, using code by Rose Nasrawi & Baiwei Liu
+made by Anna van Harmelen, 2025, using code by Ezra Nasrawi & Baiwei Liu
 """
 
 from lib import eyelinker
@@ -23,14 +23,14 @@ class Eyelinker:
        eyelinker.calibrate()
     """
 
-    def __init__(self, participant, session, window, directory) -> None:
+    def __init__(self, participant, session, session_within, window, directory) -> None:
         """
         This also connects to the tracker
         """
         self.directory = directory
         self.window = window
         self.tracker = eyelinker.EyeLinker(
-            window=window, eye="RIGHT", filename=f"{session}_{participant}.edf"
+            window=window, eye="RIGHT", filename=f"{session}_{participant}_{session_within}.edf"
         )
         self.tracker.init_tracker()
 
