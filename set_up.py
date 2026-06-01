@@ -65,7 +65,7 @@ def get_settings(monitor: dict, directory):
         [
             hue,  # Hue
             0.2,  # Saturation
-            0.5,  # Lightness
+            0.5,  # Value
         ]
         for hue in [105, 90, 75, 60, 45, 30, 15, 0, 345, 330, 315]
     ]
