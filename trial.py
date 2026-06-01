@@ -43,7 +43,7 @@ def generate_trial_characteristics(conditions, settings):
 
     colour_dict = {
         "low": random.choice(settings["stimuli_colours"][:5]),
-        "high": random.choice(settings["stimuli_colours"][6:]),
+        "high": random.choice(settings["stimuli_colours"][5:]),
     }
 
     target_colour = colour_dict[target_colour_cat]

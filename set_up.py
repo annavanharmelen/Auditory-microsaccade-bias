@@ -72,7 +72,7 @@ def get_settings(monitor: dict, directory):
 
     stimuli_colours = (
         colours[:5] + colours[6:]
-    )  # not all 12 colours can be used for stimuli
+    )  # not all 11 colours can be used for stimuli
 
     return dict(
         window=window,
